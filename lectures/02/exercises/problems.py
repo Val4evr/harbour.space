@@ -10,6 +10,14 @@ Any 14 / 16 problems solved count as 100%
 """
 
 
+class User:
+    def __init__(self, name: str):
+        self.name = name
+
+    def say_hi(self):
+        print(f"Hello, I am {self.name}")
+
+
 """
 2) BankAccount
 Create class `BankAccount` with:
@@ -23,6 +31,21 @@ Rules:
 """
 
 
+class BankAccount:
+    def __init__(self, owner: str, balance: float = 0.0):
+        self.owner = owner
+        self.balance = max(0.0, balance)
+
+    def deposit(self, amount: float):
+        if amount > 0:
+            self.balance += amount
+
+    def withdraw(self, amount: float):
+        if amount > self.balance:
+            return
+        self.balance -= amount
+
+
 """
 3) Team
 Create class `Team` with:
@@ -33,6 +56,18 @@ Rules:
 - Members are stored in insertion order.
 - Each instance has independent member storage.
 """
+
+
+class Team:
+    def __init__(self):
+        self.members = []
+
+    def add(self, name: str):
+        self.members.append(name)
+
+    def __len__(self):
+        return len(self.members)
+
 
 """ (Advanced, optional)
 5) QueueState
@@ -45,6 +80,17 @@ Rules:
 - FIFO behavior.
 - `pop` returns `None` when empty.
 """
+
+
+class QueueState:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item: str):
+        self.items.append(item)
+
+    def pop(self):
+        return self.items.pop(0) if self.items else None
 
 
 """ (Advanced, optional)
@@ -63,6 +109,28 @@ Rules:
 """
 
 
+class PaymentError(Exception):
+    pass
+
+
+class InsufficientFunds(PaymentError):
+    pass
+
+
+class Wallet:
+    def __init__(self, balance: float = 0.0):
+        self.balance = balance
+
+    def top_up(self, amount: float):
+        if amount > 0:
+            self.balance += amount
+
+    def pay(self, amount: float):
+        if amount > self.balance:
+            raise InsufficientFunds
+        self.balance -= amount
+
+
 """
 7) ShoppingCart
 Create class `ShoppingCart` with:
@@ -74,6 +142,21 @@ Rules:
 - `price < 0` or `qty <= 0` items are ignored.
 - `repr` must include `ShoppingCart`.
 """
+
+
+class ShoppingCart:
+    def __init__(self):
+        self.items = []
+
+    def add_item(self, name: str, price: float, qty: int = 1):
+        if price > 0 and qty > 0:
+            self.items.append((name, price, qty))
+
+    def total_items(self):
+        return sum(qty for _, _, qty in self.items)
+
+    def total_price(self):
+        return sum(price * qty for _, price, qty in self.items)
 
 
 """
@@ -90,6 +173,23 @@ Rules:
 """
 
 
+class Classroom:
+    school_name = "Harbour Space"
+
+    def __init__(self, group_name: str):
+        self.group_name = group_name
+        self.students = []
+
+    def add_student(self, name: str):
+        self.students.append(name)
+
+    def __len__(self):
+        return len(self.students)
+
+    def set_school_name(self, new_name: str):
+        Classroom.school_name = new_name
+
+
 """
 9) Rectangle
 Create class `Rectangle` with:
@@ -99,6 +199,18 @@ Create class `Rectangle` with:
 Rules:
 - Store positive dimensions using absolute values.
 """
+
+
+class Rectangle:
+    def __init__(self, width: float, height: float):
+        self.width = abs(width)
+        self.height = abs(height)
+
+    def area(self):
+        return self.width * self.height
+
+    def perimeter(self):
+        return 2 * (self.width + self.height)
 
 
 """
@@ -114,6 +226,23 @@ Rules:
 """
 
 
+class Playlist:
+    def __init__(self):
+        self.songs = []
+
+    def add(self, song: str):
+        self.songs.append(song)
+
+    def __len__(self):
+        return len(self.songs)
+
+    def __iter__(self):
+        return iter(self.songs)
+
+    def __contains__(self, song: str):
+        return song in self.songs
+
+
 """
 11) Product
 Create class `Product` with:
@@ -127,6 +256,22 @@ Rules:
 """
 
 
+class Product:
+    def __init__(self, name: str, price: float):
+        self.name = name
+        self.price = price
+
+    def get_price(self):
+        return self.price
+
+    def set_price(self, value: float):
+        self.price = max(0.0, value)
+
+    def apply_discount(self, percent: float):
+        percent = max(0.0, min(100.0, percent))
+        self.price = self.price * (1 - percent / 100)
+
+
 """
 12) Person + Student (inheritance)
 Create:
@@ -136,10 +281,25 @@ Required format:
 - `Person(name=Ana)`
 - `Student(name=Bo, group=G2)`
 """
-"""
 
 
-"""
+class Person:
+    def __init__(self, name: str):
+        self.name = name
+
+    def describe(self):
+        return f"Person(name={self.name})"
+
+
+class Student(Person):
+    def __init__(self, name: str, group: str):
+        super().__init__(name)
+        self.group = group
+
+    def describe(self):
+        return f"Student(name={self.name}, group={self.group})"
+
+
 """
 13) Point2D (magic methods)
 Create class `Point2D` with:
@@ -150,6 +310,21 @@ Rules:
 - Euclidean distance.
 - `repr` format: `Point2D(x, y)`.
 """
+
+
+class Point2D:
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+
+    def distance_to(self, other: "Point2D"):
+        return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
+
+    def __eq__(self, other: object):
+        return isinstance(other, Point2D) and self.x == other.x and self.y == other.y
+
+    def __repr__(self):
+        return f"Point2D({self.x}, {self.y})"
 
 
 """
@@ -166,7 +341,6 @@ Rules:
 - Removing too much removes item completely (count becomes `0`).
 """
 
-
 """
 15) CourseCatalog
 Create class `CourseCatalog` with:
@@ -176,6 +350,23 @@ Create class `CourseCatalog` with:
 - `__iter__(self)` returning `(code, title)` sorted by code
 - `__len__(self) -> int`
 """
+
+
+class CourseCatalog:
+    def __init__(self):
+        self.courses = {}
+
+    def add_course(self, code: str, title: str):
+        self.courses[code] = title
+
+    def get_title(self, code: str):
+        return self.courses.get(code)
+
+    def __iter__(self):
+        return iter(sorted(self.courses.items()))
+
+    def __len__(self):
+        return len(self.courses)
 
 
 """
