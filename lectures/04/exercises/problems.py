@@ -20,6 +20,7 @@ Problems:
 from __future__ import annotations
 
 from collections.abc import Callable
+import time
 from typing import Any
 
 
@@ -42,7 +43,13 @@ def log_calls(func: Callable[..., Any]) -> Callable[..., Any]:
     add(2, 3) -> 5
     5
     """
-    raise NotImplementedError
+    # copied over from problems 3
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        result = func(*args, **kwargs)
+        all_args = (*args, *(f"{k}={v}" for k, v in kwargs.items()))
+        print(f"{func.__name__}{all_args} -> {result}")
+        return result
+    return wrapper
 
 
 def measure_time(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -62,7 +69,14 @@ def measure_time(func: Callable[..., Any]) -> Callable[..., Any]:
     >>> work()
     done
     """
-    raise NotImplementedError
+    # copied over from problems 3
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = (time.perf_counter() - start) * 1000
+        print(f"Executed in {elapsed:.2f} ms")
+        return result
+    return wrapper
 
 
 def count_calls(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -80,7 +94,12 @@ def count_calls(func: Callable[..., Any]) -> Callable[..., Any]:
     >>> ping.calls
     2
     """
-    raise NotImplementedError
+    # copied over from problems 3
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        wrapper.calls += 1
+        return func(*args, **kwargs)
+    wrapper.calls = 0
+    return wrapper
 
 
 def ensure_non_negative(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -95,7 +114,13 @@ def ensure_non_negative(func: Callable[..., Any]) -> Callable[..., Any]:
     >>> diff(5, 2)
     3
     """
-    raise NotImplementedError
+    # copied over from problems 3
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        result = func(*args, **kwargs)
+        if result < 0:
+            raise ValueError("result must be non-negative")
+        return result
+    return wrapper
 
 
 class Retry:
@@ -156,7 +181,23 @@ class Throttle:
     - Implement this as a class decorator
     """
 
-    pass
+    def __init__(self, interval: float) -> None:
+        if interval < 0:
+            raise ValueError("interval must be non-negative")
+        self.interval = interval
+        self.last_call: float = 0.0
+
+    def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:
+        import time
+
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            now = time.perf_counter()
+            if now - self.last_call < self.interval:
+                raise RuntimeError("Too many calls")
+            self.last_call = now
+            return func(*args, **kwargs)
+
+        return wrapper
 
 
 class CallLimit:
@@ -197,7 +238,19 @@ class CallLimit:
     - Implement this as a class decorator
     """
 
-    pass
+    def __init__(self, limit: int) -> None:
+        if limit < 0:
+            raise ValueError("limit must be non-negative")
+        self.limit = limit
+
+    def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            if wrapper.calls >= self.limit:
+                raise RuntimeError("Call limit exceeded")
+            wrapper.calls += 1
+            return func(*args, **kwargs)
+        wrapper.calls = 0
+        return wrapper
 
 
 class LruCache:
@@ -217,6 +270,7 @@ class LruCache:
     >>> square(2), square(3), square(2)
     (4, 9, 4)
     """
+    # copied over from problems 3
 
     def __init__(self, maxsize: int) -> None:
         raise NotImplementedError
