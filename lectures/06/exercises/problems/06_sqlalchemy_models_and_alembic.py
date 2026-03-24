@@ -34,16 +34,6 @@ Steps:
 """
 
 
-import sqlite3
-import sys
-from pathlib import Path
-
-EXPECTED_ALEMBIC_REV = "091832a313c2"
-# lectures/06/school.db (this file: exercises/problems/06_....py)
-_LECTURE06 = Path(__file__).resolve().parent.parent.parent
-DB_PATH = _LECTURE06 / "school.db"
-
-
 def main() -> None:
     # TODO: execute the steps in the docstring.
     print("Follow the migration workflow from the docstring.")

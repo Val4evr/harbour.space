@@ -17,21 +17,15 @@ def main() -> None:
     cur = conn.cursor()
 
     # TODO: SELECT * FROM students
-    rows = cur.execute("SELECT * FROM students").fetchall()
+    # rows = cur.fetchall()
 
     # TODO: SELECT name, email FROM students
-    name_email_rows = cur.execute(
-        "SELECT name, email FROM students").fetchall()
+    # name_email_rows = cur.fetchall()
 
     # TODO: SELECT one row for ana@example.com
-    one_row = cur.execute(
-        "SELECT * FROM students WHERE email = ?", ("ana@example.com",)).fetchone()
+    # one_row = cur.fetchone()
 
     conn.close()
-
-    print("rows: ", rows)
-    print("name_email_rows: ", name_email_rows)
-    print("one_row: ", one_row)
 
 
 if __name__ == "__main__":

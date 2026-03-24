@@ -25,31 +25,14 @@ def main() -> None:
 
     with Session(engine) as session:
         # TODO 1: add an assignment for an existing student
-        ana = session.execute(
-            select(Student).where(Student.email == "ana@example.com")
-        ).scalar_one()
-        session.add(Assignment(title="Homework 1", score=90, student_id=ana.id))
-        session.commit()
 
         # TODO 2: read all students
-        students = session.execute(select(Student)).scalars().all()
-        print("All students:")
-        for s in students:
-            print(f"  {s.name}, age={s.age}, track={s.track}")
 
         # TODO 3: read filtered + sorted students
-        older = session.execute(
-            select(Student).where(Student.age >= 22).order_by(Student.age.desc())
-        ).scalars().all()
-        print("\nStudents age >= 22 (desc):")
-        for s in older:
-            print(f"  {s.name}, age={s.age}")
 
-        # TODO 4: read assignments with joined student names
-        assignments = session.execute(select(Assignment)).scalars().all()
-        print("\nAssignments:")
-        for a in assignments:
-            print(f"  [{a.student.name}] {a.title} — score={a.score}")
+        # TODO 4: read assignments with student data
+
+        session.commit()
 
 
 if __name__ == "__main__":
